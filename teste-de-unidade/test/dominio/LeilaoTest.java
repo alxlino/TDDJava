@@ -1,5 +1,6 @@
 package dominio;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.After;
@@ -8,13 +9,20 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import br.com.caelum.leilao.dominio.Lance;
 import br.com.caelum.leilao.dominio.Leilao;
 import br.com.caelum.leilao.dominio.Usuario;
+import br.com.caelum.leilao.servico.Avaliador;
 import builder.CriadorDeLeilao;
+import static br.com.caelum.matcher.LeilaoMatcher.temUmLance;
 
 public class LeilaoTest {
 	
+	private Avaliador leiloeiro;
+	private Usuario joao;
 	private Usuario ragnar;
+	private Usuario maria;
+	private Usuario odda;
 	private Usuario uhtred;
 	private Usuario steveJobs;
 
@@ -166,5 +174,27 @@ public class LeilaoTest {
 
         assertEquals(0, leilao.getLances().size());
     }
+	
+	// @Factory
+		// public static Matcher<Leilao> temUmLance(Lance lance) {
+		// 	return new LeilaoMatcher(lance);
+		// }
+		
+		@Test
+		public void existeLanceNoLeilao() {
+			
+			Leilao leilao = new CriadorDeLeilao().para("Playstation 4 Novo")
+					.lance(odda, 100.0)
+					.lance(maria, 200.0)
+					.lance(joao, 300.0)
+					.lance(joao, 400.0)
+					.lance(ragnar, 500.0)
+					.constroi();
+
+			leiloeiro.avalia(leilao);
+			
+			//assertThat(leilao, temUmLance(leiloeiro.getTodosLances().get(2)));
+			assertThat(leilao, temUmLance(new Lance(joao, 300.0)));
+		}
 	
 }
